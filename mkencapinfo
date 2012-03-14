@@ -1,0 +1,23 @@
+#!/bin/bash
+
+### This little shell script generates a encapinfo file according to
+### the encapinfo man page.
+
+SCRIPTNAME=${0##*/}
+## The encapinfo filename.
+ENCAPFILE='encapinfo'
+
+## Test args.
+if [ $# -lt 1 ]; then
+    echo "Usage: $SCRIPTNAME <short description of program>"
+    exit 1
+fi
+
+## Writing the encap file.
+cat <<EOF > $ENCAPFILE
+encap 2.0
+platform $(uname -mrs)
+date $(date)
+description $*
+contact $USER@$HOSTNAME
+EOF
