@@ -64,7 +64,7 @@ OPTIND=1
 
 ## Writing the encap file.
 cat <<EOF > $ENCAPFILE
-encap 2.2
+encap 2.1
 platform $($LSB_RELEASE -d -s)
 date $(date +'%Y.%m.%d %T %z')
 description $*
