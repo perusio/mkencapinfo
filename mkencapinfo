@@ -1,23 +1,72 @@
 #!/bin/bash
 
-### This little shell script generates a encapinfo file according to
-### the encapinfo man page.
+### mkencapinfo --- generates a encapinfo file according to
+###                 the encapinfo man page.
+
+### Copyright (C) 2015 António P. P. Almeida <appa@perusio.net>
+
+### Author: António P. P. Almeida <appa@perusio.net>
+
+### Permission is hereby granted, free of charge, to any person obtaining a
+### copy of this software and associated documentation files (the "Software"),
+### to deal in the Software without restriction, including without limitation
+### the rights to use, copy, modify, merge, publish, distribute, sublicense,
+### and/or sell copies of the Software, and to permit persons to whom the
+### Software is furnished to do so, subject to the following conditions:
+
+### The above copyright notice and this permission notice shall be included in
+### all copies or substantial portions of the Software.
+
+### Except as contained in this notice, the name(s) of the above copyright
+### holders shall not be used in advertising or otherwise to promote the sale,
+### use or other dealings in this Software without prior written authorization.
+
+### THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+### IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+### FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+### THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+### LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+### FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+### DEALINGS IN THE SOFTWARE.
 
 SCRIPTNAME=${0##*/}
+
 ## The encapinfo filename.
 ENCAPFILE='encapinfo'
 
-## Test args.
-if [ $# -lt 1 ]; then
-    echo "Usage: $SCRIPTNAME <short description of program>"
+## Needed programs.
+LSB_RELEASE=$(command -v lsb_release) || exit 0
+
+function print_usage() {
+    echo "Usage: $SCRIPTNAME -e <email address> <short description of program>"
+}
+
+## Test the number of arguments.
+if [ $# -lt 3 ]; then
+    print_usage
     exit 1
 fi
 
+## Grab the option arguments.
+while getopts e: OPT; do
+    case $OPT in
+        e|+e)
+            EMAIL_ADDRESS="$OPTARG"
+            ;;
+        *)
+            print_usage
+            exit 2
+    esac
+done
+
+shift $(( OPTIND - 1 ))
+OPTIND=1
+
 ## Writing the encap file.
 cat <<EOF > $ENCAPFILE
-encap 2.0
-platform $(uname -mrs)
-date $(date)
+encap 2.2
+platform $($LSB_RELEASE -d -s)
+date $(date +'%Y.%m.%d %T %z')
 description $*
-contact $USER@$HOSTNAME
+contact $EMAIL_ADDRESS
 EOF
