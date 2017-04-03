@@ -9,7 +9,7 @@ useful for **microservice** based applications.
 
 ## Usage
 
-    mkencpainfo -e <email address> <short description of program>
+    mkencapinfo -e <email address> <short description of program>
 
 where:
 
